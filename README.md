@@ -53,9 +53,9 @@ res := Typ{name, age}
 
 You can match the fields in order, too. e.g.
 
-```sh
+```go
 var res Typ
-res, err := strunpack.FromString[Typ]("(\w+) (\d+)").Unpack(s)
+res, err := strunpack.FromString[Typ](`(\w+) (\d+)`).Unpack(s)
 if err != nil {
     panic(err)
 }
