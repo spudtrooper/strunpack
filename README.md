@@ -18,7 +18,7 @@ s := "Mary 30"
 
 ```go
 var res Typ
-res, err := strunpack.FromString[Type](`(?P<Name>\w+) (?P<Age>\d+)`).Unpack(s)
+res, err := strunpack.FromString[Typ](`(?P<Name>\w+) (?P<Age>\d+)`).Unpack(s)
 if err != nil {
     panic(err)
 }
