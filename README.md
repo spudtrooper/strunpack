@@ -36,5 +36,5 @@ age, err := strconv.Atoi(m[2])
 if err != nil {
     panic(err)
 }
-res := Type{name, age}
+res := Typ{name, age}
 ```
