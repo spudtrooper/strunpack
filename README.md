@@ -4,7 +4,7 @@ Go library to unpack a string into a struct using named regexps.
 
 ## Example
 
-Given:
+If you have...
 
 ```go
 type Typ struct {
@@ -14,7 +14,7 @@ type Typ struct {
 s := "Mary 30"
 ```
 
-.do this:
+...do this:
 
 ```go
 var res Typ
