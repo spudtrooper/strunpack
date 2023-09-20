@@ -17,7 +17,6 @@ s := "Mary 30"
 ...do this:
 
 ```go
-var res Typ
 res, err := strunpack.FromString[Typ](`(?P<Name>\w+) (?P<Age>\d+)`).Unpack(s)
 if err != nil {
     panic(err)
@@ -54,7 +53,6 @@ res := Typ{name, age}
 You can match the fields in order, too. e.g.
 
 ```go
-var res Typ
 res, err := strunpack.FromString[Typ](`(\w+) (\d+)`).Unpack(s)
 if err != nil {
     panic(err)
