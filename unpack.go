@@ -1,9 +1,11 @@
 package strunpack
 
 import (
+	"log"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 	"golang.org/x/text/cases"
@@ -27,25 +29,58 @@ func Unpack(s string, re *regexp.Regexp, res interface{}) error {
 	}
 	resValue := reflect.ValueOf(res).Elem()
 
-	for i, name := range re.SubexpNames()[1:] {
-		fieldName := cases.Title(language.English).String(name)
-		field := resValue.FieldByName(fieldName)
-		if !field.IsValid() || !field.CanSet() {
-			continue
+	subExpNames := re.SubexpNames()
+	numSubExpNames := 0
+	for _, s := range subExpNames {
+		if strings.TrimSpace(s) != "" {
+			numSubExpNames++
 		}
-		typ := field.Type()
-		fieldStruct, ok := resType.Elem().FieldByName(fieldName)
-		if !ok {
-			return errors.Errorf("Internal error: Could not find field %s in struct", fieldName)
+	}
+	{
+		log.Printf("subExpNames: %d %v : %d", numSubExpNames, subExpNames, len(subExpNames))
+	}
+	if numSubExpNames == len(ms)-1 {
+		for i, name := range re.SubexpNames()[1:] {
+			fieldName := cases.Title(language.English).String(name)
+			field := resValue.FieldByName(fieldName)
+			if !field.IsValid() || !field.CanSet() {
+				continue
+			}
+			typ := field.Type()
+			fieldStruct, ok := resType.Elem().FieldByName(fieldName)
+			if !ok {
+				return errors.Errorf("Internal error: Could not find field %s in struct", fieldName)
+			}
+			m := ms[i+1]
+			val, err := valueOf(m, fieldStruct)
+			if err != nil {
+				return err
+			}
+			if !val.Type().ConvertibleTo(typ) {
+				return errors.Errorf("Incompatible types between struct field(%s) and matched value(%v)", name, val)
+			}
+			field.Set(val.Convert(typ))
 		}
-		val, err := valueOf(ms[i+1], fieldStruct)
-		if err != nil {
-			return err
+	} else if numSubExpNames == 0 {
+		for i, m := range ms[1:] {
+			field := resValue.FieldByIndex([]int{i})
+			if !field.IsValid() || !field.CanSet() {
+				continue
+			}
+			typ := field.Type()
+			fieldStruct := resType.Elem().FieldByIndex([]int{i})
+			val, err := valueOf(m, fieldStruct)
+			if err != nil {
+				return err
+			}
+			if !val.Type().ConvertibleTo(typ) {
+				return errors.Errorf("Incompatible types between struct field(%d:%v) and matched value(%v)", i, field, val)
+			}
+			field.Set(val.Convert(typ))
 		}
-		if !val.Type().ConvertibleTo(typ) {
-			return errors.Errorf("Incompatible types between struct field(%s) and matched value(%v)", name, val)
-		}
-		field.Set(val.Convert(typ))
+	} else {
+		return errors.Errorf("Internal error: Number of subexp names (%d) must either match number of matches (%d) or be 0",
+			len(subExpNames), len(ms))
 	}
 
 	return nil

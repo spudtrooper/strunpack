@@ -9,6 +9,10 @@ import (
 )
 
 func TestUnpackerFromRegex(t *testing.T) {
+	type Typ struct {
+		Name string
+		Age  int
+	}
 	tests := []struct {
 		input    string
 		re       *regexp.Regexp
@@ -16,16 +20,16 @@ func TestUnpackerFromRegex(t *testing.T) {
 		err      error
 	}{
 		{
-			input: "John 30",
+			input: "Alice 25",
 			re:    regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`),
 			expected: Typ{
-				Name: "John",
-				Age:  30,
+				Name: "Alice",
+				Age:  25,
 			},
 		},
 		{
 			input: "Alice 25",
-			re:    regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`),
+			re:    regexp.MustCompile(`(\w+) (\d+)`),
 			expected: Typ{
 				Name: "Alice",
 				Age:  25,
@@ -48,6 +52,10 @@ func TestUnpackerFromRegex(t *testing.T) {
 }
 
 func TestUnpackerFromString(t *testing.T) {
+	type Typ struct {
+		Name string
+		Age  int
+	}
 	tests := []struct {
 		input    string
 		re       string
@@ -55,16 +63,16 @@ func TestUnpackerFromString(t *testing.T) {
 		err      error
 	}{
 		{
-			input: "John 30",
+			input: "Alice 25",
 			re:    `(?P<Name>\w+) (?P<Age>\d+)`,
 			expected: Typ{
-				Name: "John",
-				Age:  30,
+				Name: "Alice",
+				Age:  25,
 			},
 		},
 		{
 			input: "Alice 25",
-			re:    `(?P<Name>\w+) (?P<Age>\d+)`,
+			re:    `(\w+) (\d+)`,
 			expected: Typ{
 				Name: "Alice",
 				Age:  25,

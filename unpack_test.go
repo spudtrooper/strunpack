@@ -8,12 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Typ struct {
-	Name string
-	Age  int
-}
-
 func TestUnpackValid(t *testing.T) {
+	type Typ struct {
+		Name string
+		Age  int
+	}
 	tests := []struct {
 		input    string
 		re       *regexp.Regexp
@@ -21,16 +20,16 @@ func TestUnpackValid(t *testing.T) {
 		err      error
 	}{
 		{
-			input: "John 30",
+			input: "Alice 25",
 			re:    regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`),
 			expected: Typ{
-				Name: "John",
-				Age:  30,
+				Name: "Alice",
+				Age:  25,
 			},
 		},
 		{
 			input: "Alice 25",
-			re:    regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`),
+			re:    regexp.MustCompile(`(\w+) (\d+)`),
 			expected: Typ{
 				Name: "Alice",
 				Age:  25,
@@ -53,6 +52,10 @@ func TestUnpackValid(t *testing.T) {
 }
 
 func TestUnpackInvalid(t *testing.T) {
+	type Typ struct {
+		Name string
+		Age  int
+	}
 	tests := []struct {
 		input string
 		re    *regexp.Regexp
@@ -60,6 +63,14 @@ func TestUnpackInvalid(t *testing.T) {
 		{
 			input: "InvalidInput",
 			re:    regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`),
+		},
+		{
+			input: "InconsistentSubExpNames",
+			re:    regexp.MustCompile(`(?P<Name>\w+) (\d+)`),
+		},
+		{
+			input: "ReversedSubExpNames",
+			re:    regexp.MustCompile(`(\d+) (\w+)`),
 		},
 		{
 			input: "NilRE",
@@ -81,6 +92,10 @@ func TestUnpackInvalid(t *testing.T) {
 }
 
 func TestUnpackInvalidResultType(t *testing.T) {
+	type Typ struct {
+		Name string
+		Age  int
+	}
 	input := "Jane 20"
 	re := regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`)
 	var result Typ
