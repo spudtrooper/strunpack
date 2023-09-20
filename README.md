@@ -18,7 +18,18 @@ s := "Mary 30"
 
 ```go
 var res Typ
-if err := Unpack(s, regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`), &res); {
+u := strunpack.FromString(`(?P<Name>\w+) (?P<Age>\d+)`)
+res, err := u.Unpack(s)
+if err != nil {
+    panic(err)
+}
+```
+
+--or--
+
+```go
+var res Typ
+if err := strunpack.Unpack(s, regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`), &res); {
     panic(err)
 }
 ```

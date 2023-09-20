@@ -34,7 +34,7 @@ func TestUnpackerFromRegex(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		unpacker := UnpackerFromRegex[Typ](test.re)
+		unpacker := FromRegex[Typ](test.re)
 		result, err := unpacker.Unpack(test.input)
 
 		if !errors.Is(err, test.err) {
@@ -73,7 +73,7 @@ func TestUnpackerFromString(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		unpacker := UnpackerFromString[Typ](test.re)
+		unpacker := FromString[Typ](test.re)
 		result, err := unpacker.Unpack(test.input)
 
 		if !errors.Is(err, test.err) {
