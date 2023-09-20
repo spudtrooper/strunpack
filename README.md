@@ -26,7 +26,7 @@ if err := Unpack(s, regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`), &res); {
 ...instead of:
 
 ```go
-re := regexp.MustCompile(`(?P<Name>\w+) (?P<Age>\d+)`)
+re := regexp.MustCompile(`(\w+) (\d+)`)
 m := re.FindStringSubmatch(s)
 if len(m) != 3 {
     panic("wrong number of results")
