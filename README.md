@@ -48,3 +48,15 @@ if err != nil {
 }
 res := Typ{name, age}
 ```
+
+### Lazy
+
+You can match the fields in order, too. e.g.
+
+```sh
+var res Typ
+res, err := strunpack.FromString[Typ]("(\w+) (\d+)").Unpack(s)
+if err != nil {
+    panic(err)
+}
+```
